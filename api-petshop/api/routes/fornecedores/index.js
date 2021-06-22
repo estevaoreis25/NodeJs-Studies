@@ -1,7 +1,7 @@
 const roteador = require('express').Router()
 const TabelaFornecedor = require('./TabelaFornecedor')
-const Fornecedor = require('./Fornecedor')
-
+const Fornecedor = require('./Fornecedor');
+const NaoEncontrado = require('../../erros/NaoEncontrado');
 
 // View All Providers
 roteador.get('/', async (req, res) => {
@@ -19,8 +19,11 @@ roteador.post('/', async (req, res) => {
     res.status(201);
     res.send(fornecedor);
   } catch(err){
-    res.status(400);
-    res.send(JSON.stringify({msg:err.message}));
+    res.status(400)
+    res.send(JSON.stringify({
+      msg: err.message,
+      id:err.idErro
+    }));
   }
 })
 
@@ -36,16 +39,15 @@ roteador.get('/:idFornecedor', async (req, res) => {
     res.send(JSON.stringify(fornecedor))
   } catch(err){
     res.status(404);
-    res.send(
-      JSON.stringify({
-        msg:err.message
-      })
-    )
+    res.send(JSON.stringify({
+      msg: err.message,
+      id:err.idErro
+    }));
   }
 })
 
 // Update a Provider
-roteador.put('/:idFornecedor', async (req, res)=>{
+roteador.put('/:idFornecedor', async (req, res, proximo)=>{
   try {
     const {idFornecedor} = req.params;
     const dadosRecebidos = req.body;
@@ -56,10 +58,7 @@ roteador.put('/:idFornecedor', async (req, res)=>{
     res.end();
   }
   catch(err){
-    res.status(400);
-    res.send(JSON.stringify({
-      msg: err.message
-    }));
+    proximo(err);
   }
 })
 
@@ -73,8 +72,11 @@ roteador.delete('/:idFornecedor', async (req, res)=>{
     res.status(204);
     res.end();
   } catch(err){
-    res.status(404);
-    res.send(JSON.stringify({msg:err.message}));
+    res.status(404)
+    res.send(JSON.stringify({
+      msg: err.message,
+      id:err.idErro
+    }));
   }
   
 })

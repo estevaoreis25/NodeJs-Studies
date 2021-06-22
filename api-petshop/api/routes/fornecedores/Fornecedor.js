@@ -1,6 +1,5 @@
 const TabelaFornecedor = require('./TabelaFornecedor')
 const RequisicaoMalFormada = require('../../erros/RequisicaoMalFormada')
-const Campo = require('../../erros/CampoInvalido');
 const CampoInvalido = require('../../erros/CampoInvalido');
 class Fornecedor {
   constructor({id, empresa, email, categoria, dataCriacao, dataAtualizacao, versao}){

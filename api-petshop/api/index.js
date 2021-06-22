@@ -3,6 +3,8 @@ const app = express();
 const bodyParser = require('body-parser');
 const config = require('config');
 const NaoEncontrado = require('./erros/NaoEncontrado')
+const CampoInvalido = require('./erros/CampoInvalido')
+const RequisicaoMalFormada = require('./erros/RequisicaoMalFormada')
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
@@ -11,11 +13,13 @@ const roteador = require('./routes/fornecedores');
 app.use('/api/fornecedores/', roteador);
 
 app.use((err, req, res, proximo)=>{
+  let status = 500;
   if(err instanceof NaoEncontrado){
-    res.status(404);
-  } else {
-    res.status(400);
+    status = 404;
+  } else if(err instanceof CampoInvalido || err instanceof RequisicaoMalFormada){
+    status = 400
   }
+  res.status(status);
   res.send(JSON.stringify({
     msg: err.message,
     id:err.idErro

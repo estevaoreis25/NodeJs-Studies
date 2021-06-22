@@ -1,7 +1,6 @@
 const roteador = require('express').Router()
 const TabelaFornecedor = require('./TabelaFornecedor')
 const Fornecedor = require('./Fornecedor');
-const NaoEncontrado = require('../../erros/NaoEncontrado');
 
 // View All Providers
 roteador.get('/', async (req, res) => {
@@ -11,7 +10,7 @@ roteador.get('/', async (req, res) => {
 })
 
 // Create a Providers
-roteador.post('/', async (req, res) => {
+roteador.post('/', async (req, res, proximo) => {
   try{
     const dados = req.body;
     const fornecedor = new Fornecedor(dados);
@@ -19,16 +18,12 @@ roteador.post('/', async (req, res) => {
     res.status(201);
     res.send(fornecedor);
   } catch(err){
-    res.status(400)
-    res.send(JSON.stringify({
-      msg: err.message,
-      id:err.idErro
-    }));
+      proximo(err);
   }
 })
 
 // Search a Provider
-roteador.get('/:idFornecedor', async (req, res) => {
+roteador.get('/:idFornecedor', async (req, res, proximo) => {
   try{
     const {idFornecedor} = req.params;
     const fornecedor = new Fornecedor({
@@ -38,11 +33,7 @@ roteador.get('/:idFornecedor', async (req, res) => {
     res.status(200);
     res.send(JSON.stringify(fornecedor))
   } catch(err){
-    res.status(404);
-    res.send(JSON.stringify({
-      msg: err.message,
-      id:err.idErro
-    }));
+    proximo(err);
   }
 })
 
@@ -63,7 +54,7 @@ roteador.put('/:idFornecedor', async (req, res, proximo)=>{
 })
 
 //Delete a Provider
-roteador.delete('/:idFornecedor', async (req, res)=>{
+roteador.delete('/:idFornecedor', async (req, res, proximo)=>{
   try{
     const {idFornecedor} = req.params;
     const fornecedor = new Fornecedor({id:idFornecedor});
@@ -72,11 +63,7 @@ roteador.delete('/:idFornecedor', async (req, res)=>{
     res.status(204);
     res.end();
   } catch(err){
-    res.status(404)
-    res.send(JSON.stringify({
-      msg: err.message,
-      id:err.idErro
-    }));
+      proximo(err);
   }
   
 })

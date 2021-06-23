@@ -60,7 +60,9 @@ class Fornecedor {
     const campos = ['empresa', 'email', 'categoria'];
     campos.forEach((campo)=>{
       const valor = this[campo];
+      
       if(typeof valor !=='string' || valor.length===0){
+        console.log("Entrou no erro do campo invalido")
         throw new CampoInvalido(campo);
       }
     })

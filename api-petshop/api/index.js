@@ -2,11 +2,12 @@ const  express = require('express');
 const app = express();
 const bodyParser = require('body-parser');
 const config = require('config');
-const NaoEncontrado = require('./erros/NaoEncontrado')
-const CampoInvalido = require('./erros/CampoInvalido')
-const RequisicaoMalFormada = require('./erros/RequisicaoMalFormada')
-const ValorNaoSuportado = require('./erros/ValorNaoSuportado')
-const formatosAceitos = require('./Serializador').formatosAceitos
+const NaoEncontrado = require('./erros/NaoEncontrado');
+const CampoInvalido = require('./erros/CampoInvalido');
+const RequisicaoMalFormada = require('./erros/RequisicaoMalFormada');
+const ValorNaoSuportado = require('./erros/ValorNaoSuportado');
+const formatosAceitos = require('./Serializador').formatosAceitos;
+const SerializadorErro = require('./Serializador').SerializadorErro;
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true}))
@@ -37,10 +38,13 @@ app.use((err, req, res, proximo)=>{
   } else if(err instanceof ValorNaoSuportado){
     status = 406;
   }
+
+  const serializador = new SerializadorErro(res.getHeader('Content-Type'))
   res.status(status);
-  res.send(JSON.stringify({
+  res.send(serializador.serializar({
     msg: err.message,
     id:err.idErro
-  }));
+   })
+  );
 })
 app.listen(config.get('api.porta'), ()=>console.log("a api esta funcionando"));
